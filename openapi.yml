@@ -1558,6 +1558,11 @@ components:
       description: >
         All address objects ids will be prefixed with addr_ to make them easy to
         distinguish.
+    Address:
+      title: Address
+      oneOf:
+        - type: string
+        - $ref: '#/components/schemas/ParsedAddress'
     ParseAddressResponse:
       title: ParseAddressResponse
       type: object
@@ -1745,7 +1750,7 @@ components:
       description: The information about the shipment recipient
       properties:
         address:
-          $ref: '#/components/schemas/ParsedAddress'
+          $ref: '#/components/schemas/Address'
         name:
           type: string
           description: The recipient's name
@@ -1763,7 +1768,6 @@ components:
           description: The ID of the contact if one was used to create this recipient.
           example: fwefwv28281
       required:
-        - address
         - name
         - email
         - phone
@@ -1776,7 +1780,7 @@ components:
         organization using this API
       properties:
         address:
-          $ref: '#/components/schemas/ParsedAddress'
+          $ref: '#/components/schemas/Address'
         address_line2:
           type: string
         name:
