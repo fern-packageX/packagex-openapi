@@ -1,0 +1,3027 @@
+openapi: 3.0.1
+info:
+  title: PackageX API
+  version: ''
+paths:
+  /v1/address/autocomplete:
+    post:
+      description: >-
+        Allows users to submit a piece of an address string and have the API
+        respond with the best possible options
+      operationId: address_autocomplete
+      tags:
+        - Address
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutocompleteAddressResponse'
+              examples:
+                Example1:
+                  value:
+                    status: 200
+                    data:
+                      - address: 500 7th Avenue, San Diego, CA, USA
+                        matched_text: 500 7th Avenue
+                        autocomplete_text: San Diego, CA, USA
+                      - address: 500 7th Avenue, New York, NY, USA
+                        matched_text: 500 7th Avenue
+                        autocomplete_text: New York, NY, USA
+                    message: You received two options to autocomplete your input
+                    errors: []
+                    endpoint: /v1/address/autocomplete
+      security: &ref_0
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address:
+                  type: string
+                  description: A piece of an address string
+                  example: 500 7th Ave
+              required:
+                - address
+            examples:
+              Example1:
+                value:
+                  address: 500 7th Ave
+  /v1/address/parse:
+    post:
+      description: >-
+        Takes addresses in multiple different formats and returns the address in
+        the PackageX address mode.
+      operationId: address_parse
+      tags:
+        - Address
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParseAddressResponse'
+              examples:
+                Example1:
+                  value:
+                    status: 200
+                    data:
+                      id: defnewfed_93392
+                      hash: dac0efe_w9dw
+                      line1: 500 7th Ave
+                      line2: Fl 10
+                      city: New York
+                      state: New York
+                      state_code: NY
+                      country: United States
+                      country_code: US
+                      postal_code: '10018'
+                      formatted_address: 500 7th Ave, Fl 10, New York, NY, 10018
+                      textarea: 500 7th Ave
+                      timezone: EST
+                      verified: true
+                    message: You received the address in PackageX address mode
+                    errors: []
+                    endpoint: /v1/address/parse
+      security: *ref_0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address:
+                  type: string
+                  example: 500 7th Ave, New York, NY
+              required:
+                - address
+            examples:
+              Example1:
+                value:
+                  address: 500 7th Ave, New York, NY
+  /v1/fulfillment:
+    post:
+      description: >-
+        Add the required inventory that needs to be shipped to the desired
+        recipient from your specified location.
+      operationId: inventory_fulfillment_create
+      tags:
+        - InventoryFulfillment
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inventoryFulfillmentResponse'
+              examples:
+                Example1:
+                  value:
+                    status: 200
+                    data:
+                      id: ful_dwdh3239ubcejbcjd
+                      created_at: 1679591515
+                      location_id: loc_afnHMjVUn3gnrvxU5zMvkX
+                      recipient:
+                        name: Odin Oliver
+                        email: odin.oliver@packagex.io
+                        phone: '4844836699'
+                        contact_id: fwefwv28281
+                        address:
+                          id: fefewfe_9292
+                          hash: efneif_2921
+                          line1: 600 B. Street
+                          line2: Suite 300
+                          city: San Diego
+                          state: California
+                          state_code: CA
+                          country: United States
+                          country_code: US
+                          postal_code: '90101'
+                          formatted_address: >-
+                            600 B. Street, Suite 300 7th Ave, Fl 10, San Diego,
+                            California 90101
+                          textarea: 600 B. Street
+                          timezone: PST
+                          verified: true
+                      inventory:
+                        - id: item_5og9NZ92SYzHKFTPYSEnVK
+                          verified_qty: 25
+                        - id: item_1nCNpqtyepe48BMNhzmW54
+                          verified_qty: 50
+                          packaged_length: 2
+                          packaged_width: 3
+                          packaged_height: 4
+                          packaged_weight: 6
+                        - name: Custom Item
+                          verified_qty: 5
+                          packaged_length: 2
+                          packaged_width: 3
+                          packaged_height: 4
+                          packaged_weight: 6
+                          id: item_1wefewf33232hzmW54
+                          sku: '237489237489'
+                          image_url: https://i.imgur.com/FKmX7dt.gif
+                    message: You created a fulfillment
+                    errors: []
+                    endpoint: /v1/fulfillment
+      summary: Create Fulfillment
+      security: *ref_0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipient:
+                  $ref: '#/components/schemas/Recipient'
+                location_id:
+                  type: string
+                  description: >-
+                    The ID of the location to which this manifest is being
+                    delivered
+                  example: loc_afnHMjVUn3gnrvxU5zMvkX
+                inventory:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/inventoryInventory'
+                  description: The inventory that needs to be shipped in this fulfillment
+              required:
+                - recipient
+                - location_id
+                - inventory
+            examples:
+              Example1:
+                value:
+                  location_id: loc_afnHMjVUn3gnrvxU5zMvkX
+                  recipient:
+                    name: Odin Oliver
+                    email: odin.oliver@packagex.io
+                    phone: '4844836699'
+                    contact_id: fwefwv28281
+                    address:
+                      id: fefewfe_9292
+                      hash: efneif_2921
+                      line1: 600 B. Street
+                      line2: Suite 300
+                      city: San Diego
+                      state: California
+                      state_code: CA
+                      country: United States
+                      country_code: US
+                      postal_code: '90101'
+                      formatted_address: >-
+                        600 B. Street, Suite 300 7th Ave, Fl 10, San Diego,
+                        California 90101
+                      textarea: 600 B. Street
+                      timezone: PST
+                      verified: true
+                  inventory:
+                    - id: item_5og9NZ92SYzHKFTPYSEnVK
+                      verified_qty: 25
+                    - id: item_1nCNpqtyepe48BMNhzmW54
+                      verified_qty: 50
+                      packaged_length: 2
+                      packaged_width: 3
+                      packaged_height: 4
+                      packaged_weight: 6
+                    - name: Custom Item
+                      verified_qty: 5
+                      packaged_length: 2
+                      packaged_width: 3
+                      packaged_height: 4
+                      packaged_weight: 6
+                      sku: '237489237489'
+                      image_url: https://i.imgur.com/FKmX7dt.gif
+  /v1/fulfillment/{fulfillmentId}/parcels:
+    post:
+      description: >-
+        Add the box or boxes into which you're going to pack the inventory
+        items.
+      operationId: inventory_fulfillment_createParcel
+      tags:
+        - InventoryFulfillment
+      parameters:
+        - name: fulfillmentId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/inventoryFulfillmentId'
+          examples:
+            Example1:
+              value: ful_dwdh3239ubcejbcjd
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inventoryFulfillmentResponse'
+              examples:
+                Example1:
+                  value:
+                    status: 200
+                    data:
+                      id: ful_dwdh3239ubcejbcjd
+                      created_at: 1679591515
+                      location_id: loc_afnHMjVUn3gnrvxU5zMvkX
+                      parcels:
+                        - id: prcl_fnweifnief9292
+                          length: 10
+                          width: 10
+                          height: 10
+                      recipient:
+                        name: Odin Oliver
+                        email: odin.oliver@packagex.io
+                        phone: '4844836699'
+                        contact_id: fwefwv28281
+                        address:
+                          id: fefewfe_9292
+                          hash: efneif_2921
+                          line1: 600 B. Street
+                          line2: Suite 300
+                          city: San Diego
+                          state: California
+                          state_code: CA
+                          country: United States
+                          country_code: US
+                          postal_code: '90101'
+                          formatted_address: >-
+                            600 B. Street, Suite 300 7th Ave, Fl 10, San Diego,
+                            California 90101
+                          textarea: 600 B. Street
+                          timezone: PST
+                          verified: true
+                      inventory:
+                        - id: item_5og9NZ92SYzHKFTPYSEnVK
+                          verified_qty: 25
+                        - id: item_1nCNpqtyepe48BMNhzmW54
+                          verified_qty: 50
+                          packaged_length: 2
+                          packaged_width: 3
+                          packaged_height: 4
+                          packaged_weight: 6
+                        - name: Custom Item
+                          verified_qty: 5
+                          packaged_length: 2
+                          packaged_width: 3
+                          packaged_height: 4
+                          packaged_weight: 6
+                          id: item_fewf44t43g4g43g4g4
+                          sku: '237489237489'
+                          image_url: https://i.imgur.com/FKmX7dt.gif
+                    message: You created a parcel
+                    errors: []
+                    endpoint: /v1/fulfillment/{fulfillment}/parcels
+      security: *ref_0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                parcel:
+                  $ref: '#/components/schemas/inventoryParcel'
+              required:
+                - parcel
+            examples:
+              Example1:
+                value:
+                  parcel:
+                    id: prcl_dneidn333brb3jrj3b
+                    length: 10
+                    width: 10
+                    height: 10
+  /v1/fulfillment/{fulfillmentId}/parcels/{parcelId}:
+    post:
+      description: Pack the items into the parcel(s) that you have added.
+      operationId: inventory_fulfillment_packParcel
+      tags:
+        - InventoryFulfillment
+      parameters:
+        - name: fulfillmentId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/inventoryFulfillmentId'
+          examples:
+            Example1:
+              value: ful_dwdh3239ubcejbcjd
+        - name: parcelId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/inventoryParcelId'
+          examples:
+            Example1:
+              value: prcl_fnweifnief9292
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inventoryFulfillmentResponse'
+              examples:
+                Example1:
+                  value:
+                    status: 200
+                    data:
+                      id: ful_dwdh3239ubcejbcjd
+                      status: packed
+                      created_at: 1679591515
+                      location_id: loc_afnHMjVUn3gnrvxU5zMvkX
+                      parcels:
+                        - id: prcl_fnweifnief9292
+                          length: 10
+                          width: 10
+                          height: 10
+                          inventory:
+                            id: item_1nCNpqtyepe48BMNhzmW54
+                            verified_qty: 2
+                      recipient:
+                        name: Odin Oliver
+                        email: odin.oliver@packagex.io
+                        phone: '4844836699'
+                        contact_id: fwefwv28281
+                        address:
+                          id: fefewfe_9292
+                          hash: efneif_2921
+                          line1: 600 B. Street
+                          line2: Suite 300
+                          city: San Diego
+                          state: California
+                          state_code: CA
+                          country: United States
+                          country_code: US
+                          postal_code: '90101'
+                          formatted_address: >-
+                            600 B. Street, Suite 300 7th Ave, Fl 10, San Diego,
+                            California 90101
+                          textarea: 600 B. Street
+                          timezone: PST
+                          verified: true
+                      inventory:
+                        - id: item_5og9NZ92SYzHKFTPYSEnVK
+                          verified_qty: 25
+                        - id: item_1nCNpqtyepe48BMNhzmW54
+                          verified_qty: 50
+                          packaged_length: 2
+                          packaged_width: 3
+                          packaged_height: 4
+                          packaged_weight: 6
+                        - name: Custom Item
+                          verified_qty: 5
+                          packaged_length: 2
+                          packaged_width: 3
+                          packaged_height: 4
+                          packaged_weight: 6
+                          sku: '237489237489'
+                          id: item_1nCNpqtyepe48BMNhzmW54
+                          image_url: https://i.imgur.com/FKmX7dt.gif
+                    message: You packed a parcel
+                    errors: []
+                    endpoint: /v1/fulfillment/{fulfillment}/parcels/{parcel}
+      security: *ref_0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                inventory:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/inventoryInventory'
+              required:
+                - inventory
+            examples:
+              Example1:
+                value:
+                  inventory:
+                    - id: item_1nCNpqtyepe48BMNhzmW54
+                      verified_qty: 2
+                    - id: temp_5og9NZ92SYzHKFTPYSEnVK
+                      verified_qty: 2
+                      damaged_qty: 5
+    delete:
+      description: >-
+        If you decide to delete the parcel from the fulfillment, any inventory
+        attributed to that parcel will be removed and reset.
+      operationId: inventory_fulfillment_deleteParcel
+      tags:
+        - InventoryFulfillment
+      parameters:
+        - name: fulfillmentId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/inventoryFulfillmentId'
+          examples:
+            Example1:
+              value: ful_dwdh3239ubcejbcjd
+        - name: parcelId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/inventoryParcelId'
+          examples:
+            Example1:
+              value: prcl_fnweifnief9292
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+              examples:
+                Example1:
+                  value:
+                    status: 200
+                    message: You deleted a parcel
+                    errors: []
+                    endpoint: /v1/fulfillment/{fulfillment}/parcels/{parcel}
+      security: *ref_0
+  /v1/fulfillment/{fulfillmentId}:
+    post:
+      description: Mark the fulfillment as packed.
+      operationId: inventory_fulfillment_update
+      tags:
+        - InventoryFulfillment
+      parameters:
+        - name: fulfillmentId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/inventoryFulfillmentId'
+          examples:
+            Example1:
+              value: ful_dwdh3239ubcejbcjd
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inventoryFulfillmentResponse'
+              examples:
+                Example1:
+                  value:
+                    status: 200
+                    data:
+                      id: ful_dwdh3239ubcejbcjd
+                      status: packed
+                      created_at: 1679591515
+                      location_id: loc_afnHMjVUn3gnrvxU5zMvkX
+                      parcels:
+                        - id: prcl_fnweifnief9292
+                          length: 10
+                          width: 10
+                          height: 10
+                          inventory:
+                            id: item_1nCNpqtyepe48BMNhzmW54
+                            verified_qty: 2
+                      recipient:
+                        name: Odin Oliver
+                        email: odin.oliver@packagex.io
+                        phone: '4844836699'
+                        contact_id: fwefwv28281
+                        address:
+                          id: fefewfe_9292
+                          hash: efneif_2921
+                          line1: 600 B. Street
+                          line2: Suite 300
+                          city: San Diego
+                          state: California
+                          state_code: CA
+                          country: United States
+                          country_code: US
+                          postal_code: '90101'
+                          formatted_address: >-
+                            600 B. Street, Suite 300 7th Ave, Fl 10, San Diego,
+                            California 90101
+                          textarea: 600 B. Street
+                          timezone: PST
+                          verified: true
+                      inventory:
+                        - id: item_5og9NZ92SYzHKFTPYSEnVK
+                          verified_qty: 25
+                        - id: item_1nCNpqtyepe48BMNhzmW54
+                          verified_qty: 50
+                          packaged_length: 2
+                          packaged_width: 3
+                          packaged_height: 4
+                          packaged_weight: 6
+                        - name: Custom Item
+                          verified_qty: 5
+                          packaged_length: 2
+                          packaged_width: 3
+                          packaged_height: 4
+                          packaged_weight: 6
+                          sku: '237489237489'
+                          id: item_1nCNpqtyepe48BMNhzmW54
+                          image_url: https://i.imgur.com/FKmX7dt.gif
+                    message: You marked fulfillment as packed
+                    errors: []
+                    endpoint: /v1/fulfillment/{fulfillment}
+      security: *ref_0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  $ref: '#/components/schemas/inventoryFulfillmentStatus'
+              required:
+                - status
+            examples:
+              Example1:
+                value:
+                  status: packed
+  /v1/items:
+    post:
+      operationId: inventory_item_create
+      tags:
+        - InventoryItem
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inventoryItemResponse'
+              examples:
+                Example1:
+                  value:
+                    status: 200
+                    data:
+                      created_at: 1679591515
+                      id: debebw3933hden
+                      name: My item name
+                      sku: '123345'
+                      gtin: '987654'
+                      packaged_length: 5
+                      packaged_width: 6
+                      packaged_height: 7
+                      packaged_weight: 8
+                      status: created
+                    message: You created an item
+                    errors: []
+                    endpoint: /v1/items
+      summary: Create Item
+      security: *ref_0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the item (only required property)
+                  example: My item name
+                sku:
+                  type: string
+                  description: >-
+                    Either SKU or GTIN most likely on the barcode of items so
+                    it's best to include this so that barcode scanners play
+                    nicely.
+                gtin:
+                  type: string
+                  description: >-
+                    Either SKU or GTIN most likely on the barcode of items so
+                    it's best to include this so that barcode scanners play
+                    nicely.
+                packaged_length:
+                  type: number
+                  format: double
+                  description: >-
+                    If you're planning to do fulfillments, this property will be
+                    required, so it is easier to add it on the item
+                packaged_width:
+                  type: number
+                  format: double
+                  description: >-
+                    If you're planning to do fulfillments, this property will be
+                    required, so it is easier to add it on the item
+                packaged_height:
+                  type: number
+                  format: double
+                  description: >-
+                    If you're planning to do fulfillments, this property will be
+                    required, so it is easier to add it on the item
+                packaged_weight:
+                  type: number
+                  format: double
+                  description: >-
+                    If you're planning to do fulfillments, this property will be
+                    required, so it is easier to add it on the item
+              required:
+                - name
+            examples:
+              Example1:
+                value:
+                  name: My item name
+                  sku: '123345'
+                  gtin: '987654'
+                  packaged_length: 5
+                  packaged_width: 6
+                  packaged_height: 7
+                  packaged_weight: 8
+    get:
+      description: Gets all items
+      operationId: inventory_item_list
+      tags:
+        - InventoryItem
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inventoryListItemResponse'
+      summary: List Items
+      security: *ref_0
+  /v1/items/{itemId}:
+    post:
+      description: >-
+        Updates a single item. When updating inventory, you increment and
+        decrement quantities by passing in positive and negative integers.
+        Lastly, you can optionally provide a layout value to be more specific
+        about the item's exact whereabouts in that location
+      operationId: inventory_item_update
+      tags:
+        - InventoryItem
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/inventoryItemId'
+          examples:
+            Example1:
+              value: given-item-id
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inventoryItemResponse'
+              examples:
+                Example1:
+                  value:
+                    status: 200
+                    data:
+                      created_at: 1679591515
+                      id: debebw3933hden
+                      name: Updated Name
+                      sku: '123345'
+                      gtin: '987654'
+                      packaged_length: 5
+                      packaged_width: 6
+                      packaged_height: 7
+                      packaged_weight: 8
+                      status: created
+                      updated_at: 1679591515
+                      levels:
+                        - location_id: loc_8GiCVuqZqBJi43v2WebaME
+                          verified_qty: 60
+                          id: lvl_dnqwn23ir23irb23rb23uibc
+                        - location_id: loc_dKa43ncARLdGENQPUq2CoX
+                          verified_qty: 10
+                          id: lvl_fewfwef90c803cecee
+                    message: You updated an item
+                    errors: []
+                    endpoint: /v1/item/{item}
+      summary: Update Item
+      security: *ref_0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Updated name
+                levels:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/inventoryInventoryLevel'
+            examples:
+              Example1:
+                value:
+                  name: Updated Name
+                  levels:
+                    - location_id: loc_8GiCVuqZqBJi43v2WebaME
+                      verified_qty: 30
+                      id: lvl_fewfwef90c803cecee
+                    - location_id: loc_dKa43ncARLdGENQPUq2CoX
+                      verified_qty: -50
+                      id: lvl_fewfwef90c803cecee
+    get:
+      description: Gets a single item
+      operationId: inventory_item_retrieve
+      tags:
+        - InventoryItem
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inventoryItemResponse'
+      summary: Retrieve Item
+      security: *ref_0
+    delete:
+      description: deletes a single item
+      operationId: inventory_item_delete
+      tags:
+        - InventoryItem
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/inventoryItemId'
+          examples:
+            Example1:
+              value: debebw3933hden
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+              examples:
+                Example1:
+                  value:
+                    status: 200
+                    message: You deleted an item
+                    errors: []
+                    endpoint: /v1/item/{item}
+      security: *ref_0
+  /v1/manifest:
+    post:
+      description: >-
+        To create a manifest, you only need to include the location_id and
+        specify the inventory items that you want to add.
+      operationId: inventory_manifest_create
+      tags:
+        - InventoryManifest
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inventoryManifestResponse'
+              examples:
+                Example1:
+                  value:
+                    status: 200
+                    data:
+                      created_at: 1679591515
+                      id: msft_deuibcud2fwefwec33
+                      location_id: loc_afnHMjVUn3gnrvxU5zMvkX
+                      status: accepted
+                      inventory:
+                        - id: item_pu8iNbturZy5zvB4zaUZ8t
+                          manifested_qty: 50
+                        - sku: DRC123
+                          manifested_qty: 50
+                        - gtin: '123456789'
+                          manifested_qty: 50
+                    message: You created a manifest
+                    errors: []
+                    endpoint: /v1/manifest
+      summary: Create Manifest
+      security: *ref_0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                location_id:
+                  type: string
+                  description: >-
+                    The ID of the location to which this manifest is being
+                    delivered
+                  example: loc_afnHMjVUn3gnrvxU5zMvkX
+                inventory:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/inventoryInventory'
+                  description: The inventory that is included in the manifest
+              required:
+                - location_id
+                - inventory
+            examples:
+              Example1:
+                value:
+                  location_id: loc_afnHMjVUn3gnrvxU5zMvkX
+                  inventory:
+                    - id: item_pu8iNbturZy5zvB4zaUZ8t
+                      manifested_qty: 50
+                    - sku: DRC123
+                      manifested_qty: 50
+                    - gtin: '123456789'
+                      manifested_qty: 50
+    get:
+      description: Gets all manifests
+      operationId: inventory_manifest_list
+      tags:
+        - InventoryManifest
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inventoryListManifestResponse'
+      summary: List Manifest
+      security: *ref_0
+  /v1/manifest/{manifestId}:
+    post:
+      description: >-
+        Before you can update a manifest, you'll need to update its status to
+        accepted. When all items have been verified, you are able to update the
+        status of the manifest to 'completed'.
+      operationId: inventory_manifest_update
+      tags:
+        - InventoryManifest
+      parameters:
+        - name: manifestId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/inventoryManifestId'
+          examples:
+            Example1:
+              value: msft_deuibcud2fwefwec33
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inventoryManifestResponse'
+              examples:
+                Example1:
+                  value:
+                    status: 200
+                    data:
+                      created_at: 1679591515
+                      id: msft_deuibcud2fwefwec33
+                      location_id: loc_afnHMjVUn3gnrvxU5zMvkX
+                      status: accepted
+                      inventory:
+                        - id: item_pu8iNbturZy5zvB4zaUZ8t
+                          manifested_qty: 50
+                        - sku: DRC123
+                          manifested_qty: 50
+                        - gtin: '123456789'
+                          manifested_qty: 50
+                    message: You updated a manifest
+                    errors: []
+                    endpoint: /v1/manifest/msft_deuibcud2fwefwec33
+      summary: Update Manifest
+      security: *ref_0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  $ref: '#/components/schemas/inventoryManifestStatus'
+              required:
+                - status
+            examples:
+              Example1:
+                value:
+                  status: accepted
+    get:
+      description: Gets a single manifest
+      operationId: inventory_manifest_retrieve
+      tags:
+        - InventoryManifest
+      parameters:
+        - name: manifestId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/inventoryManifestId'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inventoryManifestResponse'
+      summary: Retrieve Manifest
+      security: *ref_0
+  /v1/shipments:
+    post:
+      description: |
+        There are three pieces of information we require to get rates: sender, 
+        recipient, and parcel. There are also some additional options you can 
+        pass in to configure the shipment.
+      operationId: shipment_getRates
+      tags:
+        - Shipment
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShipmentResponse'
+              examples:
+                Example1:
+                  value:
+                    status: 200
+                    data:
+                      amount: 1324
+                      billed_amount: 1023
+                      provider:
+                        name: UPS
+                        id: 2dij3dn9
+                        logo_url: NA
+                        support_email: support@ups.com
+                        support_phone: 1-800-742-5877
+                        support_url: https://www.ups.com/us/en/support/contact-us.page
+                        marketplace: false
+                      created_at: 1679245915
+                      updated_at: 1679245933
+                      currency: usd
+                      estimated_delivery: 1679591515
+                      filters:
+                        - completed
+                      fulfillment_id: efewifb31221
+                      id: defbei39dkna
+                      status: out_for_delivery
+                      lead_time_mins: 13
+                      paid: true
+                      parcels:
+                        - id: ebfweufe922828
+                          length: 2
+                          width: 5
+                          height: 4
+                          weight: 1
+                          type: usps_flat_rate_envelope
+                      purchased_rate:
+                        id: dndine29dnc9
+                        amount: 1203
+                        billed_amount: 9023
+                        service_level:
+                          id: 3bicjss933jckjcsww
+                          name: Same Day
+                          days: 1
+                          estimated_delivery: 1679591515
+                          terms: Today by 9pm
+                          pickup_at: 1679591623
+                        provider:
+                          name: UPS
+                          id: 2dij3dn9
+                          logo_url: NA
+                          support_email: support@ups.com
+                          support_phone: 1-800-742-5877
+                          support_url: https://www.ups.com/us/en/support/contact-us.page
+                          marketplace: false
+                      rates:
+                        - id: dndine29dnc9
+                          amount: 1203
+                          billed_amount: 9023
+                          service_level:
+                            id: 3bicjss933jckjcsww
+                            name: Same Day
+                            days: 1
+                            estimated_delivery: 1679591515
+                            terms: Today by 9pm
+                            pickup_at: 1679591623
+                          provider:
+                            name: UPS
+                            id: 2dij3dn9
+                            logo_url: NA
+                            support_email: support@ups.com
+                            support_phone: 1-800-742-5877
+                            support_url: https://www.ups.com/us/en/support/contact-us.page
+                            marketplace: false
+                      recipient:
+                        name: Odin Oliver
+                        email: odin.oliver@packagex.io
+                        phone: '4844836699'
+                        contact_id: fwefwv28281
+                        address:
+                          id: fefewfe_9292
+                          hash: efneif_2921
+                          line1: 600 B. Street
+                          line2: Suite 300
+                          city: San Diego
+                          state: California
+                          state_code: CA
+                          country: United States
+                          country_code: US
+                          postal_code: '90101'
+                          formatted_address: >-
+                            600 B. Street, Suite 300 7th Ave, Fl 10, San Diego,
+                            California 90101
+                          textarea: 600 B. Street
+                          timezone: PST
+                          verified: true
+                      sender:
+                        name: Jamie Jones
+                        email: jamie@packagex.io
+                        phone: '4844836699'
+                        contact_id: cwnwif2821
+                        address:
+                          id: defnewfed_93392
+                          hash: dac0efe_w9dw
+                          line1: 500 7th Ave
+                          line2: Fl 10
+                          city: New York
+                          state: New York
+                          state_code: NY
+                          country: United States
+                          country_code: US
+                          postal_code: '10018'
+                          formatted_address: 500 7th Ave, Fl 10, New York, NY, 10018
+                          textarea: 500 7th Ave
+                          timezone: EST
+                          verified: true
+                      organization_id: dwndiwqe22en2
+                      invoice_id: verwdwdwq3j33x2
+                      kiosk_id: fcewueek9393
+                      tracking_number: wefewfwecn290ioieqoi1221239
+                      tracking_url: https://www.ups.com/track?loc=en_US&requester=ST/
+                      tracking_updates:
+                        - address:
+                            id: defnewfed_93392
+                            hash: dac0efe_w9dw
+                            line1: 500 7th Ave
+                            line2: Fl 10
+                            city: New York
+                            state: New York
+                            state_code: NY
+                            country: United States
+                            country_code: US
+                            postal_code: '10018'
+                            formatted_address: 500 7th Ave, Fl 10, New York, NY, 10018
+                            textarea: 500 7th Ave
+                            timezone: EST
+                            verified: true
+                          status: in_transit
+                          message: In Transit
+                          images: []
+                          created_at: 1679591515
+                          updated_at: 1679591623
+                          event: shipment.tracking_updated
+                        - address:
+                            id: defnewfed_93392
+                            hash: dac0efe_w9dw
+                            line1: 500 7th Ave
+                            line2: Fl 10
+                            city: New York
+                            state: New York
+                            state_code: NY
+                            country: United States
+                            country_code: US
+                            postal_code: '10018'
+                            formatted_address: 500 7th Ave, Fl 10, New York, NY, 10018
+                            textarea: 500 7th Ave
+                            timezone: EST
+                            verified: true
+                          status: out_for_delivery
+                          message: Out for Delivery
+                          images: []
+                          created_at: 1679591515
+                          updated_at: 1679591623
+                          event: shipment.tracking_updated
+                      coordinates:
+                        - 37.7749
+                        - 122.4194
+                    message: You created a shipment
+                    errors: []
+                    events:
+                      - shipment.rates_generated
+                      - shipment.tracking_updated
+                    endpoint: /v1/shipments
+      summary: Get Shipment Rates
+      security: *ref_0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sender:
+                  $ref: '#/components/schemas/Sender'
+                recipient:
+                  $ref: '#/components/schemas/Recipient'
+                parcel:
+                  $ref: '#/components/schemas/ParcelShipment'
+                options:
+                  $ref: '#/components/schemas/ShipmentOptions'
+              required:
+                - sender
+                - recipient
+                - parcel
+            examples:
+              Example1:
+                value:
+                  sender:
+                    name: Jamie Jones
+                    email: jamie@packagex.io
+                    phone: '4844836699'
+                    contact_id: cwnwif2821
+                    address:
+                      id: defnewfed_93392
+                      hash: dac0efe_w9dw
+                      line1: 500 7th Ave
+                      line2: Fl 10
+                      city: New York
+                      state: New York
+                      state_code: NY
+                      country: United States
+                      country_code: US
+                      postal_code: '10018'
+                      formatted_address: 500 7th Ave, Fl 10, New York, NY, 10018
+                      textarea: 500 7th Ave
+                      timezone: EST
+                      verified: true
+                  recipient:
+                    name: Odin Oliver
+                    email: odin.oliver@packagex.io
+                    phone: '4844836699'
+                    contact_id: fwefwv28281
+                    address:
+                      id: fefewfe_9292
+                      hash: efneif_2921
+                      line1: 600 B. Street
+                      line2: Suite 300
+                      city: San Diego
+                      state: California
+                      state_code: CA
+                      country: United States
+                      country_code: US
+                      postal_code: '90101'
+                      formatted_address: >-
+                        600 B. Street, Suite 300 7th Ave, Fl 10, San Diego,
+                        California 90101
+                      textarea: 600 B. Street
+                      timezone: PST
+                      verified: true
+                  parcel:
+                    length: 2
+                    width: 5
+                    height: 4
+                    weight: 1
+                    type: usps_flat_rate_envelope
+    get:
+      description: Lists shipments up to the specified limit starting at the specified page
+      operationId: shipment_list
+      tags:
+        - Shipment
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListShipmentResponse'
+      summary: List Shipments
+      security: *ref_0
+  /v1/shipments/{shipmentId}:
+    post:
+      description: Purchase Shipment Rate
+      operationId: shipment_purchase
+      tags:
+        - Shipment
+      parameters:
+        - name: shipmentId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ShipmentId'
+          examples:
+            Example1:
+              value: ship_czhgjrk5JaVvyATPDbyURp
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShipmentResponse'
+              examples:
+                Example1:
+                  value:
+                    status: 200
+                    data:
+                      amount: 1324
+                      billed_amount: 1023
+                      provider:
+                        name: UPS
+                        id: 2dij3dn9
+                        logo_url: NA
+                        support_email: support@ups.com
+                        support_phone: 1-800-742-5877
+                        support_url: https://www.ups.com/us/en/support/contact-us.page
+                        marketplace: false
+                      created_at: 1679245915
+                      updated_at: 1679245933
+                      currency: usd
+                      estimated_delivery: 1679591515
+                      filters:
+                        - completed
+                      fulfillment_id: efewifb31221
+                      id: defbei39dkna
+                      status: out_for_delivery
+                      lead_time_mins: 13
+                      paid: true
+                      parcels:
+                        - id: ebfweufe922828
+                          length: 2
+                          width: 5
+                          height: 4
+                          weight: 1
+                          type: usps_flat_rate_envelope
+                      purchased_rate:
+                        id: dndine29dnc9
+                        amount: 1203
+                        billed_amount: 9023
+                        service_level:
+                          id: 3bicjss933jckjcsww
+                          name: Same Day
+                          days: 1
+                          estimated_delivery: 1679591515
+                          terms: Today by 9pm
+                          pickup_at: 1679591623
+                        provider:
+                          name: UPS
+                          id: 2dij3dn9
+                          logo_url: NA
+                          support_email: support@ups.com
+                          support_phone: 1-800-742-5877
+                          support_url: https://www.ups.com/us/en/support/contact-us.page
+                          marketplace: false
+                      rates:
+                        - id: dndine29dnc9
+                          amount: 1203
+                          billed_amount: 9023
+                          service_level:
+                            id: 3bicjss933jckjcsww
+                            name: Same Day
+                            days: 1
+                            estimated_delivery: 1679591515
+                            terms: Today by 9pm
+                            pickup_at: 1679591623
+                          provider:
+                            name: UPS
+                            id: 2dij3dn9
+                            logo_url: NA
+                            support_email: support@ups.com
+                            support_phone: 1-800-742-5877
+                            support_url: https://www.ups.com/us/en/support/contact-us.page
+                            marketplace: false
+                      recipient:
+                        name: Odin Oliver
+                        email: odin.oliver@packagex.io
+                        phone: '4844836699'
+                        contact_id: fwefwv28281
+                        address:
+                          id: fefewfe_9292
+                          hash: efneif_2921
+                          line1: 600 B. Street
+                          line2: Suite 300
+                          city: San Diego
+                          state: California
+                          state_code: CA
+                          country: United States
+                          country_code: US
+                          postal_code: '90101'
+                          formatted_address: >-
+                            600 B. Street, Suite 300 7th Ave, Fl 10, San Diego,
+                            California 90101
+                          textarea: 600 B. Street
+                          timezone: PST
+                          verified: true
+                      sender:
+                        name: Jamie Jones
+                        email: jamie@packagex.io
+                        phone: '4844836699'
+                        contact_id: cwnwif2821
+                        address:
+                          id: defnewfed_93392
+                          hash: dac0efe_w9dw
+                          line1: 500 7th Ave
+                          line2: Fl 10
+                          city: New York
+                          state: New York
+                          state_code: NY
+                          country: United States
+                          country_code: US
+                          postal_code: '10018'
+                          formatted_address: 500 7th Ave, Fl 10, New York, NY, 10018
+                          textarea: 500 7th Ave
+                          timezone: EST
+                          verified: true
+                      organization_id: dwndiwqe22en2
+                      invoice_id: verwdwdwq3j33x2
+                      kiosk_id: fcewueek9393
+                      tracking_number: wefewfwecn290ioieqoi1221239
+                      tracking_url: https://www.ups.com/track?loc=en_US&requester=ST/
+                      tracking_updates:
+                        - address:
+                            id: defnewfed_93392
+                            hash: dac0efe_w9dw
+                            line1: 500 7th Ave
+                            line2: Fl 10
+                            city: New York
+                            state: New York
+                            state_code: NY
+                            country: United States
+                            country_code: US
+                            postal_code: '10018'
+                            formatted_address: 500 7th Ave, Fl 10, New York, NY, 10018
+                            textarea: 500 7th Ave
+                            timezone: EST
+                            verified: true
+                          status: in_transit
+                          message: In Transit
+                          images: []
+                          created_at: 1679591515
+                          updated_at: 1679591623
+                          event: shipment.tracking_updated
+                        - address:
+                            id: defnewfed_93392
+                            hash: dac0efe_w9dw
+                            line1: 500 7th Ave
+                            line2: Fl 10
+                            city: New York
+                            state: New York
+                            state_code: NY
+                            country: United States
+                            country_code: US
+                            postal_code: '10018'
+                            formatted_address: 500 7th Ave, Fl 10, New York, NY, 10018
+                            textarea: 500 7th Ave
+                            timezone: EST
+                            verified: true
+                          status: out_for_delivery
+                          message: Out for Delivery
+                          images: []
+                          created_at: 1679591515
+                          updated_at: 1679591623
+                          event: shipment.tracking_updated
+                      coordinates:
+                        - 37.7749
+                        - 122.4194
+                    message: You purchased a shipping label
+                    errors: []
+                    events:
+                      - shipment.purchase
+                      - shipment.tracking_updated
+                    endpoint: /v1/shipments/ship_czhgjrk5JaVvyATPDbyURp
+      summary: Purchase Shipment Rate
+      security: *ref_0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rate_id:
+                  type: string
+                  description: The ID of the rate that you wish to purchase
+                  example: rate_bdc2f190408545ec8a118886fd5e1dee
+                payment_method:
+                  type: string
+                  description: >-
+                    The ID of the payment method that you want to use from the
+                    payment methods you have on file with PackageX. If not
+                    provided, we'll use the default payment method on file
+                payment_reference:
+                  type: string
+                  description: >-
+                    A reference to the payment that can be added to this
+                    shipment. This is a field generated by the user
+                  example: Sandbox Department
+                label_size:
+                  $ref: '#/components/schemas/LabelSize'
+              required:
+                - rate_id
+                - payment_reference
+                - label_size
+            examples:
+              Example1:
+                value:
+                  rate_id: rate_bdc2f190408545ec8a118886fd5e1dee
+                  payment_reference: Sandbox Department
+                  label_size: 4x6
+    get:
+      description: Retrieves a specific shipment
+      operationId: shipment_retrieve
+      tags:
+        - Shipment
+      parameters:
+        - name: shipmentId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ShipmentId'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShipmentResponse'
+      summary: Retrieve Shipment
+      security: *ref_0
+  /v1/shipments/{shipmentId}/refetch:
+    post:
+      description: >
+        After you already fetched rates, you can also fetch new rates. You'll
+        want to do this if:
+          - Your rate has expired because the rates_generated_at is more than 15 minutes from now.
+          - You want to update your options that you added into the shipment.
+      operationId: shipment_refetchRates
+      tags:
+        - Shipment
+      parameters:
+        - name: shipmentId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ShipmentId'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShipmentResponse'
+      summary: Refetch Shipment Rates
+      security: *ref_0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                options:
+                  $ref: '#/components/schemas/ShipmentOptions'
+components:
+  schemas:
+    AddressId:
+      title: AddressId
+      type: string
+      description: >
+        All address objects ids will be prefixed with addr_ to make them easy to
+        distinguish.
+    ParseAddressResponse:
+      title: ParseAddressResponse
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ParsedAddress'
+      required:
+        - data
+      allOf:
+        - $ref: '#/components/schemas/Response'
+    ParsedAddress:
+      title: ParsedAddress
+      type: object
+      description: The PackageX address object
+      properties:
+        id:
+          $ref: '#/components/schemas/AddressId'
+          description: >-
+            The ID for this address. Can be passed into any address field in the
+            future to retrieve this exact address.
+        hash:
+          type: string
+          description: >-
+            Similar to the address ID, the hash is a unique string that
+            identifies the address but without the line2 property.
+          example: dac0efe_w9dw
+        line1:
+          type: string
+          description: The first line of the street address.
+          example: 500 7th Ave
+        line2:
+          type: string
+          description: The second line of the street address.
+          example: Fl 10
+        city:
+          type: string
+          description: The name of the city.
+          example: New York
+        state:
+          type: string
+          description: The full name of the state.
+          example: New York
+        state_code:
+          type: string
+          description: The abbreviated code for the state if applicable.
+          example: NY
+        country:
+          type: string
+          description: The full name of the country for this address.
+          example: United States
+        country_code:
+          type: string
+          description: The two character country code for this address.
+          example: US
+        postal_code:
+          type: string
+          description: The postal code for this address.
+          example: '10018'
+        formatted_address:
+          type: string
+          description: The full text string of the address.
+          example: 500 7th Ave, Fl 10, New York, NY, 10018
+        textarea:
+          type: string
+          description: >-
+            The full text string of the address without the line2 address. This
+            is useful if using address auto complete that does not provide a
+            line2 address which would be asked for in a separate input field.
+          example: 500 7th Ave
+        timezone:
+          type: string
+          description: The timezone for this address
+          example: EST
+        verified:
+          type: boolean
+          description: If we have verified this address
+          example: true
+      required:
+        - id
+        - hash
+        - line1
+        - line2
+        - city
+        - state
+        - state_code
+        - country
+        - country_code
+        - postal_code
+        - formatted_address
+        - textarea
+        - timezone
+        - verified
+    AutocompleteAddressResponse:
+      title: AutocompleteAddressResponse
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressSuggestion'
+      required:
+        - data
+      allOf:
+        - $ref: '#/components/schemas/Response'
+    AddressSuggestion:
+      title: AddressSuggestion
+      type: object
+      description: Suggested addresses based on input
+      properties:
+        address:
+          type: string
+          description: The full predicted address
+          example: 500 7th Avenue, San Diego, CA, USA
+        matched_text:
+          type: string
+          description: The input given by user
+          example: 500 7th Avenue
+        autocomplete_text:
+          type: string
+          description: The text added by the API to provide prediction
+          example: San Diego, CA, USA
+      required:
+        - address
+        - matched_text
+        - autocomplete_text
+    Response:
+      title: Response
+      type: object
+      description: An error response
+      properties:
+        status:
+          type: integer
+          description: A 2XX code
+          example: 200
+        message:
+          type: string
+          description: A human readable message to display to an end user
+          example: You deleted a parcel
+        code:
+          type: string
+        errors:
+          type: array
+          items:
+            type: string
+          description: >-
+            An list of errors that occurred. Normally will be of the properties
+            that failed validation.
+          example: []
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        events:
+          type: array
+          items:
+            type: string
+          description: All of the events that were triggered due to this request
+        endpoint:
+          type: string
+          description: The endpoint that was hit
+          example: /v1/fulfillment/{fulfillment}/parcels/{parcel}
+      required:
+        - status
+        - message
+        - errors
+        - endpoint
+    Options:
+      title: Options
+      type: object
+      properties:
+        parse_addresses:
+          type: boolean
+          description: >-
+            If the extracted sender and recipient addresses should be run
+            through the address parser.
+        match_contacts:
+          type: boolean
+          description: >-
+            If you want the extracted sender and recipient fields to be matched
+            to existing contacts in your organization.
+      required:
+        - parse_addresses
+        - match_contacts
+    Recipient:
+      title: Recipient
+      type: object
+      description: The information about the shipment recipient
+      properties:
+        address:
+          $ref: '#/components/schemas/ParsedAddress'
+        name:
+          type: string
+          description: The recipient's name
+          example: Odin Oliver
+        email:
+          type: string
+          description: The recipient's email
+          example: odin.oliver@packagex.io
+        phone:
+          type: string
+          description: The recipient's phone
+          example: '4844836699'
+        contact_id:
+          type: string
+          description: The ID of the contact if one was used to create this recipient.
+          example: fwefwv28281
+      required:
+        - address
+        - name
+        - email
+        - phone
+        - contact_id
+    Sender:
+      title: Sender
+      type: object
+      description: >-
+        The information about the shipment sender, which is normally the
+        organization using this API
+      properties:
+        address:
+          $ref: '#/components/schemas/ParsedAddress'
+        address_line2:
+          type: string
+        name:
+          type: string
+          description: The sender's name
+          example: Jamie Jones
+        email:
+          type: string
+          description: The sender's email
+          example: jamie@packagex.io
+        phone:
+          type: string
+          description: The sender's phone
+          example: '4844836699'
+        contact_id:
+          type: string
+          description: The sender's unique packagex ID
+          example: cwnwif2821
+      required:
+        - address
+        - name
+        - email
+        - phone
+        - contact_id
+    Search:
+      title: Search
+      type: object
+      description: A special property that will be included if searching through shipments.
+      properties:
+        id:
+          type: string
+          description: The ID of the shipment.
+        tracking_number:
+          type: string
+          description: The tracking number.
+        sender_name:
+          type: string
+          description: The sender's name. It will also match common nicknames.
+        sender_email:
+          type: string
+          description: The sender's email.
+        sender_phone:
+          type: string
+          description: The sender's phone.
+        sender_formatted_address:
+          type: string
+          description: The sender's full address string.
+        recipient_name:
+          type: string
+          description: The recipient's name. It will also match common nicknames.
+        recipient_email:
+          type: string
+          description: The recipient's email.
+        recipient_phone:
+          type: string
+          description: The recipient's phone.
+        recipient_formatted_address:
+          type: string
+          description: The recipient's full address string.
+        provider_name:
+          type: string
+          description: The shipping provider's name.
+        provider_id:
+          type: string
+          description: The shipping provider's ID
+        metadata:
+          type: object
+          additionalProperties: true
+          description: Any custom metadata that you have added
+        relevance_score:
+          type: number
+          format: double
+          description: >-
+            A number from 0 - 1 about how relevant the result was to the search
+            query, with 1 being a perfect match.
+      required:
+        - id
+        - tracking_number
+        - sender_name
+        - sender_email
+        - sender_phone
+        - sender_formatted_address
+        - recipient_name
+        - recipient_email
+        - recipient_phone
+        - recipient_formatted_address
+        - provider_name
+        - provider_id
+        - relevance_score
+    Filters:
+      title: Filters
+      type: string
+      enum:
+        - completed
+        - outstanding
+        - exception
+      description: >-
+        A sudo status given to the delivery to know what is happening with the
+        delivery.
+    Pagination:
+      title: Pagination
+      type: object
+      description: >-
+        The pagination object returned in responses where multiple values are
+        returned
+      properties:
+        limit:
+          type: integer
+          description: The limit for the responses
+        page:
+          type: integer
+          description: The current page offset that is being retrieved
+        has_more:
+          type: boolean
+          description: >-
+            indicates if there are more values in the database not retrieved in
+            this query
+      required:
+        - limit
+        - page
+        - has_more
+    Provider:
+      title: Provider
+      type: object
+      description: Details about a shipping provider for a given rate or shipment
+      properties:
+        name:
+          type: string
+          description: The name of the provider
+          example: UPS
+        id:
+          type: string
+          description: Unique ID of the provider
+          example: 2dij3dn9
+        logo_url:
+          type: string
+          description: The url for the provider's logo
+          example: NA
+        support_email:
+          type: string
+          description: The contact email provided by the shipping provider
+        support_phone:
+          type: string
+          description: The contact phone provided by the shipping provider
+        support_url:
+          type: string
+          description: The contact website provided by the shipping provider
+          example: https://www.ups.com/us/en/support/contact-us.page
+        support_reference:
+          type: string
+          description: A support reference code that some providers use to help customers.
+        marketplace:
+          type: boolean
+          description: >-
+            If this shipping provider came from the PackageX marketplace.
+            Typically large providers like FedEx, UPS, USPS, etc are not from
+            the marketplace and same-day courier are not.
+          example: false
+      required:
+        - name
+        - id
+        - logo_url
+        - support_url
+        - marketplace
+    inventoryFulfillmentId:
+      title: inventoryFulfillmentId
+      type: string
+    inventoryFulfillmentResponse:
+      title: inventoryFulfillmentResponse
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/inventoryFulfillment'
+      required:
+        - data
+      allOf:
+        - $ref: '#/components/schemas/Response'
+    inventoryFulfillment:
+      title: inventoryFulfillment
+      type: object
+      description: >-
+        The fulfillment model represents a unique fulfillment containing the
+        inventory that was sent to the recipient.
+      properties:
+        cancel_reason:
+          type: string
+          description: >-
+            If the fulfillment gets canceled, a reason can be optionally
+            provided here.
+        created_at:
+          type: integer
+          description: Time in epoch seconds when this resource was created
+          example: 1679591515
+        complete_by:
+          type: integer
+          description: Time in epoch seconds by which this fulfillment should be completed
+        id:
+          $ref: '#/components/schemas/inventoryFulfillmentId'
+          description: The unique ID given to this fulfillment prefixed with ful_
+        inventory:
+          type: array
+          items:
+            $ref: '#/components/schemas/inventoryInventory'
+          description: The inventory that needs to be shipped in this fulfillment
+        label_url:
+          type: string
+          description: >-
+            The URL of the shipping label that gets generated when the
+            fulfillment is completed
+        location_id:
+          type: string
+          description: The ID of the location to which this manifest is being delivered
+          example: loc_afnHMjVUn3gnrvxU5zMvkX
+        metadata:
+          type: object
+          additionalProperties: true
+          description: These are your metadata key value pairs added to the manifest
+        order_number:
+          type: string
+          description: >-
+            The order number that either you provided to the fulfillment or that
+            PackageX added automatically
+        organization_id:
+          type: string
+          description: >-
+            The ID of the organization that owns this fulfillment. In almost all
+            cases, this will be your organization ID.
+        packaging_recommendations:
+          type: array
+          items:
+            type: string
+          description: >-
+            A list of the recommended way(s) to package to product into parcels
+            if any shipping boxes are predefined in the settings. This is
+            currently an empty array for all users.
+        packing_slip_url:
+          type: array
+          items:
+            type: string
+          description: >-
+            The URL to the PDF of the packing slip for all items added to
+            inventory
+        parcels:
+          type: array
+          items:
+            $ref: '#/components/schemas/inventoryParcel'
+          description: All parcels in the fulfillment and the inventory packed within them
+        rates_generated_at:
+          type: integer
+          description: >-
+            Time in epoch seconds when shipping rates were generated for this
+            fulfillment. Shipping rates are only valid for 15 minutes after
+            which new rates must be fetched.
+        recipient:
+          $ref: '#/components/schemas/Recipient'
+          description: Details about the contact receiving this shipment
+        sender:
+          $ref: '#/components/schemas/Sender'
+          description: Details about the contact sending this shipment
+        shipment_id:
+          type: string
+          description: >-
+            The ID of the shipment associated with this fulfillment, prefixed
+            with ship_
+        shipment_rate_type:
+          $ref: '#/components/schemas/inventoryShipmentRateType'
+        status:
+          $ref: '#/components/schemas/inventoryFulfillmentStatus'
+        updated_at:
+          type: integer
+          description: Time in epoch seconds when this resource was last updated
+      required:
+        - created_at
+        - id
+        - inventory
+        - location_id
+    inventoryFulfillmentStatus:
+      title: inventoryFulfillmentStatus
+      type: string
+      enum:
+        - created
+        - processing
+        - packed
+        - completed
+        - canceled
+      description: The status of the fulfillment
+    inventoryShipmentRateType:
+      title: inventoryShipmentRateType
+      type: string
+      enum:
+        - in_person_pickup
+        - curbside_pickup
+        - locker_pickup
+        - provider_delivery
+        - offline_delivery
+      description: >-
+        The type of rate that was purchased for the shipment linked to the
+        fulfillment without needing to query the shipment.
+    inventoryInventory:
+      title: inventoryInventory
+      type: object
+      description: >-
+        An inventory model is an item or asset that is inside of a manifest,
+        fulfillment, or parcel.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/inventoryInventoryAttributes'
+        comment:
+          type: string
+          description: A free text field to add any comments about this item
+        created_at:
+          type: integer
+          description: Time in epoch seconds when this resource was created
+        verified_qty:
+          type: integer
+          description: The amount of on hand inventory.
+        damaged_qty:
+          type: integer
+          description: The amount of on hand inventory that is deemed damaged
+        manifested_qty:
+          type: integer
+          description: >-
+            The amount of inventory that is on a manifest that has not been
+            added to inventory yet
+        harmonized_code:
+          type: string
+          description: >-
+            The harmonized system code for the item. This is required if you
+            will be shipping this item internationally.
+        id:
+          type: string
+          description: >-
+            The unique ID given to this product. This will stay the same even if
+            the SKU or GTIN values are updated.
+        gtin:
+          type: string
+          description: >-
+            The global identifier for the item, which is consistent across
+            vendors for this item
+        sku:
+          type: string
+          description: The unique identifier that is added by you for this item
+        serial_number:
+          type: string
+          description: A unique number given to an asset
+        image_url:
+          type: string
+          description: A thumbnail image for the inventory
+        name:
+          type: string
+          description: The name of the item
+        origin_country:
+          type: string
+          description: >-
+            The country that manufactured this item. This is required if
+            shipping the item internationally
+        vendor:
+          type: string
+          description: The company that created the inventory
+        value:
+          type: integer
+          description: The value of this each individual item in cents
+        packaged_length:
+          type: number
+          format: double
+          description: The length of the item in inches when placed in shipping packaging
+        packaged_width:
+          type: number
+          format: double
+          description: The width of the item in inches when placed in shipping packaging
+        packaged_height:
+          type: number
+          format: double
+          description: The height of the item in inches when placed in shipping packaging
+        packaged_weight:
+          type: number
+          format: double
+          description: >-
+            The weight of the item in pounds (lbs) when placed in shipping
+            packaging
+    inventoryInventoryAttributes:
+      title: inventoryInventoryAttributes
+      type: string
+      enum:
+        - alcohol
+        - marijuana
+        - pharma
+        - dry_ice
+        - lithium
+      description: A list of enumerated strings to give more context to special items.
+    inventoryParcelId:
+      title: inventoryParcelId
+      type: string
+    inventoryParcel:
+      title: inventoryParcel
+      type: object
+      description: A parcel or package that will be included in a shipment
+      properties:
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/inventoryInventoryAttributes'
+        id:
+          $ref: '#/components/schemas/inventoryParcelId'
+          description: The unique ID assigned to the parcel beginning with prcl_
+        length:
+          type: integer
+          description: The length of the package in inches
+          example: 2
+        width:
+          type: integer
+          description: The width of the package in inches
+          example: 5
+        height:
+          type: integer
+          description: The height of the package in inches
+          example: 4
+        weight:
+          type: integer
+          description: The weight of the package in pounds
+        type:
+          $ref: '#/components/schemas/PackageType'
+        special_handling:
+          type: string
+          description: >-
+            Any special handing instructions provided. Not all shipping
+            providers support these
+        tracking_number:
+          type: string
+          description: The tracking number for this parcel if a shipment was purchased
+        label_url:
+          type: string
+          description: The shipping label PDF for this parcel if a shipment was purchased
+        inventory:
+          $ref: '#/components/schemas/inventoryInventory'
+          description: The inventory packed inside of the parcel
+      required:
+        - id
+        - length
+        - width
+        - height
+    inventoryItemId:
+      title: inventoryItemId
+      type: string
+    inventoryItemResponse:
+      title: inventoryItemResponse
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/inventoryItem'
+      required:
+        - data
+      allOf:
+        - $ref: '#/components/schemas/Response'
+    inventoryListItemResponse:
+      title: inventoryListItemResponse
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/inventoryItem'
+      required:
+        - data
+      allOf:
+        - $ref: '#/components/schemas/Response'
+    inventoryItem:
+      title: inventoryItem
+      type: object
+      properties:
+        attributes:
+          $ref: '#/components/schemas/inventoryInventoryAttributes'
+        color:
+          type: string
+          description: Any value can be added here
+        created_at:
+          type: integer
+          description: Time in epoch seconds when this resource was created
+          example: 1679591515
+        description:
+          type: string
+          description: The details about the item
+        gtin:
+          type: string
+          description: >-
+            The global identifier for the item, which is consistent across
+            vendors for this item
+        harmonized_code:
+          type: string
+          description: >-
+            The harmonized system code for the item. This is required if you
+            will be shipping this item internationally.
+        id:
+          $ref: '#/components/schemas/inventoryItemId'
+          description: >-
+            The unique ID given to this product. This will stay the same even if
+            the SKU or GTIN values are updated.
+        images:
+          type: array
+          items:
+            type: string
+          description: A list of URLs of images that have been added for this item
+        levels:
+          type: array
+          items:
+            $ref: '#/components/schemas/inventoryInventoryLevel'
+          description: >-
+            Information about inventory levels for this item across various
+            locations and layouts
+        metadata:
+          type: object
+          additionalProperties: true
+          description: Any custom metadata that you have added
+        name:
+          type: string
+          description: The name of the item
+          example: My item name
+        length:
+          type: number
+          format: double
+          description: The length of the item in inches
+        width:
+          type: number
+          format: double
+          description: The width of the item in inches
+        height:
+          type: number
+          format: double
+          description: The height of the item in inches
+        weight:
+          type: number
+          format: double
+          description: The weight of the item in pounds (lbs)
+        packaged_length:
+          type: number
+          format: double
+          description: The length of the item in inches when placed in shipping packaging
+        packaged_width:
+          type: number
+          format: double
+          description: The width of the item in inches when placed in shipping packaging
+        packaged_height:
+          type: number
+          format: double
+          description: The height of the item in inches when placed in shipping packaging
+        packaged_weight:
+          type: number
+          format: double
+          description: >-
+            The weight of the item in pounds (lbs) when placed in shipping
+            packaging
+        origin_country:
+          type: string
+          description: >-
+            The country that manufactured this item. This is required if
+            shipping the item internationally
+        organization_id:
+          type: string
+          description: >-
+            The unique identifier for the organization that owns this item. This
+            will always be your organization ID
+        status:
+          type: string
+        size:
+          type: string
+          description: >-
+            The size of the item. This is used for display purposes on a product
+            page. This is common when adding something like a "small" or "large"
+            variation.
+        sku:
+          type: string
+          description: The SKU of the item added by you
+        total_verified:
+          type: integer
+          description: The total verified inventory count across all levels
+        total_damaged:
+          type: integer
+          description: The total damaged inventory count across all levels
+        total_manifested:
+          type: integer
+          description: The total inventory count that is on a manifest
+        total_reserved:
+          type: integer
+          description: The total inventory count that is reserved
+        updated_at:
+          type: integer
+          description: Time in epoch seconds when this resource was updated
+        value:
+          type: integer
+          description: The value of this each individual item in cents
+      required:
+        - created_at
+        - id
+        - name
+    inventoryInventoryLevel:
+      title: inventoryInventoryLevel
+      type: object
+      properties:
+        id:
+          type: string
+          description: The ID for the level that starts with lvl_
+        location_id:
+          type: string
+          description: The ID of the location this in which this inventory level is housed
+        layout_id:
+          type: string
+          description: The layout ID within the location where this inventory can be found
+        layout_name:
+          type: string
+          description: The name of the layout this item is on.
+        verified_qty:
+          type: integer
+          description: The amount of on hand inventory.
+        damaged_qty:
+          type: integer
+          description: The amount of on hand inventory that is deemed damaged
+        manifested_qty:
+          type: integer
+          description: >-
+            The amount of inventory that is on a manifest that has not been
+            added to inventory yet
+        reserved_qty:
+          type: integer
+          description: >-
+            Inventory that has been reserved by being pulled out of the
+            verified_qty count, usually due to being attributed to a fulfillment
+      required:
+        - id
+        - location_id
+    inventoryManifestResponse:
+      title: inventoryManifestResponse
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/inventoryManifest'
+      required:
+        - data
+      allOf:
+        - $ref: '#/components/schemas/Response'
+    inventoryListManifestResponse:
+      title: inventoryListManifestResponse
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/inventoryManifest'
+      required:
+        - data
+      allOf:
+        - $ref: '#/components/schemas/Response'
+    inventoryManifestId:
+      title: inventoryManifestId
+      type: string
+    inventoryManifest:
+      title: inventoryManifest
+      type: object
+      description: >-
+        The manifest model represents a unique manifest containing the inventory
+        that you would like to track.
+      properties:
+        created_at:
+          type: integer
+          description: Time in epoch seconds when this resource was created
+          example: 1679591515
+        created_inventory:
+          type: array
+          items:
+            $ref: '#/components/schemas/inventoryInventory'
+          description: >-
+            Inventory must be created before the manifest can be acted upon. It
+            is common for this to be empty.
+        estimated_delivery:
+          type: integer
+          description: Time in epoch seconds when we estimate the delivery will occur.
+        id:
+          $ref: '#/components/schemas/inventoryManifestId'
+          description: The unique ID given to this manifest prefixed with msft_
+        inventory:
+          type: array
+          items:
+            $ref: '#/components/schemas/inventoryInventory'
+          description: The inventory that is included in the manifest
+        location_id:
+          type: string
+          description: The ID of the location to which this manifest is being delivered
+          example: loc_afnHMjVUn3gnrvxU5zMvkX
+        metadata:
+          type: object
+          additionalProperties: true
+          description: These are your metadata key value pairs added to the manifest
+        order_number:
+          type: string
+          description: >-
+            The order number that either you provided to the manifest or that
+            PackageX added automatically
+        organization_id:
+          type: string
+          description: >-
+            The ID of the organization that owns this manifest. In almost all
+            cases, this will be your organization ID.
+        tracking_numbers:
+          type: array
+          items:
+            type: string
+          description: >-
+            A list of all tracking numbers for this manifest. When added,
+            trackers will be created for each tracking number which will then
+            update the estimated_delivery property.
+        status:
+          $ref: '#/components/schemas/inventoryManifestStatus'
+        updated_at:
+          type: integer
+          description: Time in epoch seconds when this item was last updated
+      required:
+        - created_at
+        - id
+        - inventory
+        - location_id
+    inventoryManifestStatus:
+      title: inventoryManifestStatus
+      type: string
+      enum:
+        - requested
+        - accepted
+        - processing
+        - completed
+        - void
+      description: The status of the manifest
+    ShipmentId:
+      title: ShipmentId
+      type: string
+    LabelSize:
+      title: LabelSize
+      type: string
+      enum:
+        - 4x6
+        - letter
+        - 4x8
+        - a4
+        - a6
+      description: >-
+        Specify a label size for the returned shipping label. If not included,
+        we'll use the default shipping label size set from the PackageX
+        Dashboard.
+    ShipmentResponse:
+      title: ShipmentResponse
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Shipment'
+      required:
+        - data
+      allOf:
+        - $ref: '#/components/schemas/Response'
+    ListShipmentResponse:
+      title: ListShipmentResponse
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Shipment'
+      required:
+        - data
+      allOf:
+        - $ref: '#/components/schemas/Response'
+    Rate:
+      title: Rate
+      type: object
+      description: >-
+        The shipping rate object showing the service level, price, and shipping
+        provider information
+      properties:
+        id:
+          type: string
+          description: >-
+            The ID for this rate. To purchase a shipping label after getting
+            rates, you will pass in this rate to indicate you wish to purchase
+            it
+          example: dndine29dnc9
+        amount:
+          type: integer
+          description: >-
+            The amount that will be collected from a customer. This includes any
+            upcharges or discounts you have added to the price on the PackageX
+            Dashboard.
+          example: 1203
+        billed_amount:
+          type: integer
+          description: The amount that your organization will be billed for this rate.
+          example: 9023
+        carrier_account:
+          type: string
+          description: >-
+            The custom rate card that was used for this transaction. Should be
+            null for all organizations currently.
+        pickup_at:
+          type: integer
+          description: >-
+            Time in epoch seconds when this shipment will be picked up, if that
+            is included in the service of this rate. Will be null otherwise.
+        provider:
+          $ref: '#/components/schemas/Provider'
+        service_level:
+          $ref: '#/components/schemas/ServiceLevel'
+      required:
+        - id
+        - amount
+        - billed_amount
+        - provider
+        - service_level
+    ServiceLevel:
+      title: ServiceLevel
+      type: object
+      description: The service level for this rate
+      properties:
+        name:
+          type: string
+          description: The human readable name for this service label
+          example: Same Day
+        id:
+          type: string
+          description: The unique ID of this provider's service level
+          example: 3bicjss933jckjcsww
+        terms:
+          type: string
+          description: The human readable delivery estimate for this rate
+          example: Today by 9pm
+        days:
+          type: integer
+          description: >-
+            The integer of days that this delivery is estimated to take if the
+            provider receives the shipment before their daily cutoff time.
+          example: 1
+        estimated_delivery:
+          type: integer
+          description: >-
+            The time in epoch seconds when we estimate the shipment at this rate
+            will be delivered
+          example: 1679591515
+        pickup_at:
+          type: integer
+          description: >-
+            The time in epoch seconds when this shipment will be picked up for
+            this rate
+          example: 1679591623
+      required:
+        - name
+        - id
+        - terms
+        - days
+        - estimated_delivery
+        - pickup_at
+    RefundStatus:
+      title: RefundStatus
+      type: string
+      enum:
+        - requested
+        - refunded
+        - rejected
+      description: The status of the refund on this shipment if one was requested
+    RateTypes:
+      title: RateTypes
+      type: string
+      enum:
+        - in_person_pickup
+        - curbside_pickup
+        - locker_pickup
+        - provider_delivery
+        - offline_delivery
+      description: The type of rate that should be returned for the shipment.
+    ShipmentOptions:
+      title: ShipmentOptions
+      type: object
+      description: Options that were passed in when generated shipping rates.
+      properties:
+        provider_timeout:
+          type: integer
+          description: >-
+            The amount of time in milliseconds to wait for a shipping provider
+            before discarding it's results.
+        verify_address:
+          type: boolean
+          description: If all addresses for the shipment should be verified
+        checkout_total:
+          type: integer
+          description: >-
+            The total price in USD cents for the cart total during an e-commerce
+            purchase.
+        request_provider_pickup:
+          type: boolean
+          description: If the shipping provider should pick up this package.
+        providers:
+          type: array
+          items:
+            type: string
+          description: The list of shipping provider IDs that you want returned.
+        service_levels:
+          type: array
+          items:
+            type: string
+          description: The list of service level IDs that you want returned.
+        max_delivery_days:
+          type: integer
+          description: The maximum number of delivery days for this shipment.
+        rate_types:
+          type: array
+          items:
+            $ref: '#/components/schemas/RateTypes'
+    Shipment:
+      title: Shipment
+      type: object
+      description: A shipment object
+      properties:
+        amount:
+          type: integer
+          description: >-
+            The amount that will be collected from a customer. This includes any
+            upcharges or discounts you have added to the price on the PackageX
+            Dashboard.
+        billed_amount:
+          type: integer
+          description: The amount that your organization will be billed for this rate.
+        provider:
+          $ref: '#/components/schemas/Provider'
+        created_at:
+          type: integer
+          description: Time in epoch seconds when this shipment was created.
+          example: 1679245915
+        updated_at:
+          type: integer
+          description: Time in epoch seconds when this shipment was last updated.
+          example: 1679245933
+        currency:
+          $ref: '#/components/schemas/Currency'
+        estimated_delivery:
+          type: integer
+          description: Time in epoch seconds when we estimate the delivery will occur.
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/Filters'
+        fulfillment_id:
+          type: string
+          description: The ID of the fulfillment that created this shipment.
+          example: efewifb31221
+        id:
+          $ref: '#/components/schemas/ShipmentId'
+          description: The unique ID for the shipment
+        refund_status:
+          $ref: '#/components/schemas/RefundStatus'
+        status:
+          $ref: '#/components/schemas/ShipmentStatus'
+        lead_time_mins:
+          type: integer
+          description: >-
+            The amount of lead time needed to prepare the shipment for an
+            on-demand courier. This is only applicable for same-day shipments
+            and indicated how much advance notice is required between the
+            shipping provider and sender before a courier will be dispatched.
+          example: 13
+        metadata:
+          type: object
+          additionalProperties: true
+          description: >-
+            Custom key value pairs that the organization is able to add to this
+            shipment
+        options:
+          $ref: '#/components/schemas/ShipmentOptions'
+        paid:
+          type: boolean
+          description: If the shipment has been paid for
+          example: true
+        parcels:
+          type: array
+          items:
+            $ref: '#/components/schemas/inventoryParcel'
+          description: The individual packages that are part of this shipment.
+        payment_reference:
+          type: string
+          description: >-
+            A user generated reference for this payment. Will be included in
+            invoices.
+        purchased_rate:
+          $ref: '#/components/schemas/Rate'
+        rates:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rate'
+          description: All of the rates that were returned when creating this shipment
+        recipient:
+          $ref: '#/components/schemas/Recipient'
+        sender:
+          $ref: '#/components/schemas/Sender'
+        pickup_at:
+          type: integer
+          description: >-
+            Seconds from epoch when this shipment will be picked up, if pickup
+            is part of the rate's service level
+        organization_id:
+          type: string
+          description: The ID of the organization that owns this shipment
+          example: dwndiwqe22en2
+        label_url:
+          type: string
+          description: The url for the shipping label
+        invoice_id:
+          type: string
+          description: The ID of the invoice for this shipment
+          example: verwdwdwq3j33x2
+        kiosk_id:
+          type: string
+          description: This kiosk that was used to generate this shipment.
+          example: fcewueek9393
+        tracking_number:
+          type: string
+          description: The tracking number for this shipment.
+          example: wefewfwecn290ioieqoi1221239
+        tracking_url:
+          type: string
+          description: The url for the end user to track their shipment
+          example: https://www.ups.com/track?loc=en_US&requester=ST/
+        feedback:
+          $ref: '#/components/schemas/ShipmentFeedback'
+        tracking_updates:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrackingUpdate'
+          description: >-
+            A list of all tracking updates that occurred for this shipment from
+            oldest to newest
+        coordinates:
+          type: array
+          items:
+            type: number
+            format: double
+          example:
+            - 37.7749
+            - 122.4194
+        _search:
+          $ref: '#/components/schemas/Search'
+      required:
+        - created_at
+        - updated_at
+        - currency
+        - filters
+        - fulfillment_id
+        - id
+        - status
+        - lead_time_mins
+        - paid
+        - parcels
+        - rates
+        - recipient
+        - sender
+        - organization_id
+        - invoice_id
+        - kiosk_id
+        - tracking_number
+        - tracking_url
+        - tracking_updates
+        - coordinates
+    ParcelShipment:
+      title: ParcelShipment
+      type: object
+      description: A parcel or package that will be included in a shipment
+      properties:
+        length:
+          type: integer
+          description: The length of the package in inches
+        width:
+          type: integer
+          description: The width of the package in inches
+        height:
+          type: integer
+          description: The height of the package in inches
+        weight:
+          type: integer
+          description: The weight of the package in pounds
+        type:
+          $ref: '#/components/schemas/PackageType'
+        special_handling:
+          $ref: '#/components/schemas/SpecialHandling'
+          description: >-
+            Any special handing instructions provided. Not all shipping
+            providers support these
+        inventory:
+          $ref: '#/components/schemas/inventoryInventory'
+          description: The inventory packed inside of the parcel
+    TrackingUpdate:
+      title: TrackingUpdate
+      type: object
+      description: The record of each tracking update from a shipment
+      properties:
+        address:
+          $ref: '#/components/schemas/ParsedAddress'
+        status:
+          $ref: '#/components/schemas/ShipmentStatus'
+        comment:
+          type: string
+          description: A shipping provider comment
+        images:
+          type: array
+          items:
+            type: string
+          description: Urls of images
+          example: []
+        message:
+          type: string
+          description: Human readable text explaining the status
+          example: In Transit
+        event:
+          $ref: '#/components/schemas/ShipmentEvent'
+          description: >-
+            The event that occurred when this event was created. For all events
+            see https://docs.packagex.io/shipments/events
+        created_at:
+          type: integer
+          description: Time from unix eopch seconds when this tracking update was created
+          example: 1679591515
+        updated_at:
+          type: integer
+          description: The time in epoch seconds when this status was last updated
+          example: 1679591623
+        location_id:
+          type: string
+          description: >-
+            The ID of the location of this update, if it is one of your
+            locations.
+        layout_id:
+          type: string
+          description: >-
+            The ID of the layout that this item is on, if it matches one of your
+            locations.
+      required:
+        - address
+        - status
+        - images
+        - message
+        - event
+        - created_at
+        - updated_at
+    ShipmentEvent:
+      title: ShipmentEvent
+      type: string
+      enum:
+        - shipment.rates_generated
+        - shipment.expired
+        - shipment.purchased
+        - shipment.tracking_updated
+        - shipment.canceled
+        - shipment.refunded
+        - shipment.coordinates_updated
+    ShipmentFeedback:
+      title: ShipmentFeedback
+      type: object
+      description: User provided feedback for this shipment
+      properties:
+        rating:
+          $ref: '#/components/schemas/FeedbackRating'
+        comment:
+          type: string
+          description: A comment that the user provided about their experience
+        updated_at:
+          type: integer
+          description: When the feedback was updated in epoch seconds
+    FeedbackRating:
+      title: FeedbackRating
+      type: integer
+    Currency:
+      title: Currency
+      type: string
+      enum:
+        - usd
+      description: The currency used for this shipment.
+    SpecialHandling:
+      title: SpecialHandling
+      type: string
+      enum:
+        - confidential
+        - fragile
+        - urgent
+        - perishable
+        - legal_document
+        - oversized
+        - dry_ice
+        - batteries
+        - time_sensitive
+        - signature
+    ShipmentStatus:
+      title: ShipmentStatus
+      type: string
+      enum:
+        - rates_generated
+        - created
+        - address_issue
+        - provider_at_pickup
+        - contact_provider
+        - delayed
+        - delivery_attempted
+        - delivery_rescheduled
+        - delivery_scheduled
+        - out_for_delivery
+        - package_accepted
+        - package_at_waypoint
+        - in_transit
+        - pickup_available
+        - provider_at_dropoff
+        - package_damaged
+        - delivered
+        - return_to_sender
+        - package_undeliverable
+        - package_lost
+        - canceled
+      description: >-
+        The current status for the shipment. It's the same status as the latest
+        tracking_update just surfaced for convenience. See
+        https://docs.packagex.io/shipments/statuses for more info on statuses.
+    PackageType:
+      title: PackageType
+      type: string
+      enum:
+        - usps_flat_rate_envelope
+        - usps_flat_rate_window_envelope
+        - usps_small_flat_rate_envelope
+        - usps_flat_rate_padded_envelope
+        - usps_flat_rate_legal_envelope
+        - usps_small_flat_rate_box
+        - usps_medium_flat_rate_box_1
+        - usps_medium_flat_rate_box_2
+        - usps_large_flat_rate_box_1
+        - usps_large_flat_rate_box_2
+        - usps_large_flat_rate_box_apo_fpo
+      description: >-
+        The courier specific packaging. See
+        https://docs.packagex.io/shipments/predefined-packages for more
+        information
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: PX-API-KEY
+servers:
+  - url: https://api.packagex.io
+    description: Production
+  - url: https://sandbox.packagex.io
+    description: Sandbox
